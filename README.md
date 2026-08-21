@@ -86,6 +86,17 @@ the protocol audit under `artifacts/`. Its duration is intentionally bounded to
 10 minutes; it is a practical health check, not a claim of long-duration soak
 qualification.
 
+Three process-level teardown/reconnect cycles take about 85 seconds and are
+also unattended:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\physical_restart_check.py `
+  --real-radio-disconnected --cycles 3
+```
+
+Each cycle constructs a fresh endpoint process, reaches a stable session,
+observes heartbeat replies, shuts down cleanly, pauses briefly, and reconnects.
+
 For local development before the library is published:
 
 ```powershell

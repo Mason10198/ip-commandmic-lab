@@ -38,10 +38,10 @@ These gaps are documented rather than hidden behind application approximations:
   icon clearing/restoration, Parrot audio, 0–32 and startup-22 volume behavior,
   spectrum freshness, WAV recording, common audio-file playback, and status LED
   off behavior.
-- Short automated physical connection-health runs and a small set of targeted
-  restart/reconnect/PoE cycles. Long unattended soak duration is not a release
-  goal; bounded runs must still show no stale audio, stuck PTT or display
-  divergence.
+- Automated physical connection health passed three consecutive fresh-process
+  restart/reconnect cycles on 2026-08-21. All three completed startup and
+  maintained heartbeat replies without a recorded failure. Targeted PoE power
+  cycles remain pending; long unattended soak duration is not a release goal.
 - A generic continuous low-latency application-audio source and the reference
   AllStarLink-style node bridge. Bounded files, generated tones and Parrot replay
   are implemented now.
