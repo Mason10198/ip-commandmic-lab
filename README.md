@@ -73,6 +73,19 @@ The Windows x64 build requires the Microsoft Edge WebView2 runtime. Audits are
 written to the current user's application-data directory, so the extracted
 release remains portable and read-only-safe.
 
+For a short unattended physical-link check, keep the real radio disconnected
+and run:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\physical_health_check.py `
+  --real-radio-disconnected --duration 180
+```
+
+The check requires no interaction after startup and writes a JSON summary plus
+the protocol audit under `artifacts/`. Its duration is intentionally bounded to
+10 minutes; it is a practical health check, not a claim of long-duration soak
+qualification.
+
 For local development before the library is published:
 
 ```powershell

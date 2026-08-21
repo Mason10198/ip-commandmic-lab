@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Mason10198/ip-commandmic
+          ref: v1.0.0rc2
+          path: protocol-library
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check ./protocol-library
+          python -m pip install --disable-pip-version-check pytest miniaudio pywebview
+          python -m pip install --disable-pip-version-check --no-deps -e .
+      - name: Run tests
+        run: python -m pytest -q
+
+  package-smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Mason10198/ip-commandmic
+          ref: v1.0.0rc2
+          path: protocol-library
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install build dependencies
+        run: |
+          python -m venv .venv
+          .venv\Scripts\python.exe -m pip install --disable-pip-version-check ./protocol-library
+          .venv\Scripts\python.exe -m pip install --disable-pip-version-check miniaudio pywebview pyinstaller
+          .venv\Scripts\python.exe -m pip install --disable-pip-version-check --no-deps .
+      - name: Build and smoke-test Windows package
+        shell: pwsh
+        run: ./scripts/build.ps1

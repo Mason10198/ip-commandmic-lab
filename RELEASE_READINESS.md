@@ -38,8 +38,10 @@ These gaps are documented rather than hidden behind application approximations:
   icon clearing/restoration, Parrot audio, 0–32 and startup-22 volume behavior,
   spectrum freshness, WAV recording, common audio-file playback, and status LED
   off behavior.
-- Cold-start/reconnect/PoE-cycle coverage and a 30-minute physical-CommandMic
-  soak with no stale audio, stuck PTT or display divergence.
+- Short automated physical connection-health runs and a small set of targeted
+  restart/reconnect/PoE cycles. Long unattended soak duration is not a release
+  goal; bounded runs must still show no stale audio, stuck PTT or display
+  divergence.
 - A generic continuous low-latency application-audio source and the reference
   AllStarLink-style node bridge. Bounded files, generated tones and Parrot replay
   are implemented now.
