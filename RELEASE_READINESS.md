@@ -40,8 +40,10 @@ These gaps are documented rather than hidden behind application approximations:
   off behavior.
 - Automated physical connection health passed three consecutive fresh-process
   restart/reconnect cycles on 2026-08-21. All three completed startup and
-  maintained heartbeat replies without a recorded failure. Targeted PoE power
-  cycles remain pending; long unattended soak duration is not a release goal.
+  maintained heartbeat replies without a recorded failure. Three consecutive
+  PoE power cycles also recovered through the same running endpoint: each
+  restored startup and heartbeat traffic, with no connection or startup
+  failures recorded. Long unattended soak duration is not a release goal.
 - A generic continuous low-latency application-audio source and the reference
   AllStarLink-style node bridge. Bounded files, generated tones and Parrot replay
   are implemented now.
