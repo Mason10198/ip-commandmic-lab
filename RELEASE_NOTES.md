@@ -1,3 +1,33 @@
+# 0.1.0-alpha.32
+
+- Replaces the competing connection-status writers with one stable state model,
+  eliminating heartbeat-time text flicker and capitalization changes.
+- Restyles connection health as a compact two-line status pill. Only the green
+  link dot emits a subtle heartbeat ring; the text remains still.
+
+# 0.1.0-alpha.31
+
+- Consolidates connection/session/control/heartbeat information into the
+  existing top-right connection indicator; it pulses only while recent real
+  heartbeat replies are being received.
+- Makes audio-file playback a Play/Stop toggle and prevents overlapping
+  playback operations through the shared library.
+- Records physical confirmation that microphone gain 1–5 changes take effect
+  during an already-connected session.
+- Updates the Lab dependency to `ip-commandmic 1.0.0rc2`.
+
+# 0.1.0-alpha.30
+
+- Moves microphone gain and immediate backlight controls out of the connection
+  strip and into the main CommandMic workspace.
+- Adds explicit connection, verified-session, control-readiness, and real
+  received-heartbeat status. Pulses the audio-file button for the full bounded
+  playback operation.
+- Records physical acceptance of connection stability, audio/meters, recording,
+  Parrot, volume, display and LED behavior. Runtime microphone-gain acoustic
+  effect remains unresolved and is not claimed as verified.
+- Updates the Lab dependency to the public `ip-commandmic 1.0.0rc1` line.
+
 # 0.1.0-alpha.29
 
 - Adds a live microphone-gain selector backed by the shared library's typed

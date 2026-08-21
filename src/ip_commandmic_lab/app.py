@@ -121,11 +121,22 @@ class CommandMicLabService:
         return {"ok": True}
 
     def snapshot(self) -> dict[str, Any]:
-        return (
-            self._runtime.state.snapshot(include_events=False)
-            if self._runtime
-            else self._disconnected_snapshot
+        if self._runtime is None:
+            return {**self._disconnected_snapshot, "heartbeat_age_seconds": None}
+        state = self._runtime.state.snapshot()
+        heartbeat_time = next(
+            (
+                float(event["time"])
+                for event in reversed(state["events"])
+                if event.get("event") == "received_heartbeat_response"
+            ),
+            None,
         )
+        state.pop("events", None)
+        state["heartbeat_age_seconds"] = (
+            max(0.0, time.time() - heartbeat_time) if heartbeat_time is not None else None
+        )
+        return state
 
     def protocol_events(self) -> dict[str, Any]:
         if self._runtime is None:
@@ -246,6 +257,9 @@ class CommandMicLabService:
 
     def send_wav(self, path: str) -> dict[str, Any]:
         return self._result(lambda: self._require().send_audio_file(path))
+
+    def stop_audio_playback(self) -> dict[str, Any]:
+        return self._result(lambda: self._require().stop_audio_playback())
 
     def browse_audio_file(self) -> dict[str, Any]:
         """Open the platform-native audio picker without exposing the window API."""

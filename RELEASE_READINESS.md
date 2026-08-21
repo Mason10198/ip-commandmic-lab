@@ -2,13 +2,13 @@
 
 ## Release posture
 
-Version `0.1.0-alpha.29` is ready for a packaged **public alpha** release. Its
+Version `0.1.0-alpha.32` is ready for a packaged **public alpha** release. Its
 offline application and packaging checks pass, but it is not a final
 hardware-qualified release. The real radio must remain disconnected: this app
 implements the radio side of the link and is intended to operate a physical or
 software CommandMic.
 
-The application is a thin client of `ip-commandmic 0.2.0a12`. Protocol
+The application is a thin client of `ip-commandmic 1.0.0rc2`. Protocol
 framing, sessions, display dimensions and metadata, LED/backlight values,
 button/PTT decoding, speaker-volume state, Parrot capture/replay, RTP/audio
 packetization, common-file decoding and WAV recording are library-owned. The
@@ -32,10 +32,12 @@ workflow.
 
 These gaps are documented rather than hidden behind application approximations:
 
-- Physical alpha.29 acceptance of display text/dots, live microphone-gain
-  changes, icon clearing/restoration,
-  Parrot audio, the 0–32 volume behavior, spectrum, WAV recording and common
-  audio-file playback.
+- Live 1–5 microphone-gain changes and their audible effect are physically
+  confirmed during an already-connected session.
+- Alpha.29 physical acceptance passed for stable connection, display text/dots,
+  icon clearing/restoration, Parrot audio, 0–32 and startup-22 volume behavior,
+  spectrum freshness, WAV recording, common audio-file playback, and status LED
+  off behavior.
 - Cold-start/reconnect/PoE-cycle coverage and a 30-minute physical-CommandMic
   soak with no stale audio, stuck PTT or display divergence.
 - A generic continuous low-latency application-audio source and the reference

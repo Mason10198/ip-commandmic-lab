@@ -8,7 +8,7 @@ from ip_commandmic_lab.app import CommandMicLabService, build_lab_html
 
 
 def test_lab_packages_full_control_surface() -> None:
-    assert ip_commandmic_lab.__version__ == "0.1.0a29"
+    assert ip_commandmic_lab.__version__ == "0.1.0a32"
     page = build_lab_html()
     assert "__DISPLAY_SVG__" not in page
     assert "__CAPABILITIES_JSON__" not in page
@@ -42,7 +42,7 @@ def test_lab_packages_full_control_surface() -> None:
     assert "set_parrot" in page
     assert "set_speaker_volume" in page
     assert "set_mic_gain" in page
-    assert "Microphone gain (live)" in page
+    assert "Microphone gain (live command)" in page
     assert "browse_audio_file" in page
     assert "browse_recording_folder" in page
     assert "WAV, MP3, FLAC, OGG or AIFF" in page
@@ -163,6 +163,26 @@ def test_record_parrot_pulses_and_spectrum_only_accepts_new_audio_packets() -> N
     assert "classList.toggle('parrot-recording',parrotStatus==='recording')" in page
     assert "classList.toggle('parrot-playing',parrotStatus==='playing')" in page
     assert "if(audioPackets>lastAudioPackets)updateSpectrum(s.waveform)" in page
+    assert "classList.add('audio-file-playing')" in page
+    assert "classList.remove('audio-file-playing')" in page
+    assert "call('stop_audio_playback')" in page
+    assert "button.textContent='Stop audio file'" in page
+
+
+def test_connection_strip_contains_only_parameters_and_actions() -> None:
+    page = build_lab_html()
+    connection = page.split('<section class="connection"', 1)[1].split("</section>", 1)[0]
+    device_outputs = page.split('<div class="card-title">Device outputs</div>', 1)[1]
+    assert 'id="mic_gain"' not in connection
+    assert 'id="backlight"' not in connection
+    assert 'id="mic_gain"' in device_outputs
+    assert 'id="backlightButtons"' in device_outputs
+    assert 'class="connection-health"' not in connection
+    assert "heartbeat-live" in page
+    assert "Link healthy" in page
+    assert "$('statusText').textContent=s.connection" not in page
+    assert 'id="statusDetail" class="status-detail"' in page
+    assert "received_heartbeat_response" in inspect.getsource(CommandMicLabService.snapshot)
 
 
 def test_audio_statistics_use_dbfs_sample_magnitudes_and_exact_duration() -> None:
