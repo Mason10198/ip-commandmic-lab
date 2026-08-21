@@ -60,10 +60,9 @@ physical left-to-right order. Parrot's `-PARROT-` overlay clears all icons and
 disabling the mode restores the exact most recently submitted 68-byte display.
 The Lab app starts at speaker volume 22.
 
-Microphone gain uses the observed two-frame mapping for values 1–5. The same
-mapping and its acoustic effect are verified during startup; changing it in an
-already-stable session is included for physical-CommandMic acceptance and is
-not yet promoted to independently verified runtime timing.
+Microphone gain uses the observed two-frame mapping for values 1–5. Physical
+testing confirms that changes take audible effect during an already-connected
+session, and the selected value is reflected in endpoint state.
 
 Original project code is MIT licensed. See [NOTICE.md](NOTICE.md) for Icom
 trademark and third-party asset limitations.
