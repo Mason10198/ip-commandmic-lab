@@ -14,6 +14,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--real-radio-disconnected", action="store_true", required=True)
     parser.add_argument("--duration", type=float, default=180.0)
+    parser.add_argument("--connect-timeout", type=float, default=20.0)
     parser.add_argument("--local-ip", default="192.168.0.1")
     parser.add_argument("--mic-ip", default="192.168.0.2")
     parser.add_argument("--control-port", type=int, default=52001)
@@ -22,6 +23,8 @@ def main() -> int:
     args = parser.parse_args()
     if not 15 <= args.duration <= 600:
         parser.error("--duration must be between 15 and 600 seconds")
+    if not 2 <= args.connect_timeout <= 60:
+        parser.error("--connect-timeout must be between 2 and 60 seconds")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     audit = args.output.with_suffix(".jsonl")
@@ -43,6 +46,7 @@ def main() -> int:
     connected_at: float | None = None
     heartbeat_times: list[float] = []
     failures: list[dict[str, object]] = []
+    seen_failures: set[str] = set()
     transitions: list[dict[str, object]] = []
     last_connection: str | None = None
     endpoint.start()
@@ -64,25 +68,39 @@ def main() -> int:
                     if not heartbeat_times or stamp > heartbeat_times[-1]:
                         heartbeat_times.append(stamp)
                 elif event["event"] in {"connection_failed", "startup_effect_error"}:
-                    if event not in failures:
+                    signature = json.dumps(event.get("data", {}), sort_keys=True)
+                    if signature not in seen_failures:
+                        seen_failures.add(signature)
                         failures.append(event)
+            if failures and "Access is denied" in json.dumps(failures[-1]):
+                break
+            if connected_at is None and time.monotonic() - started >= args.connect_timeout:
+                break
             time.sleep(0.25)
     finally:
         endpoint.stop()
 
     elapsed = time.monotonic() - started
     intervals = [b - a for a, b in zip(heartbeat_times, heartbeat_times[1:])]
+    connected_after = connected_at - started if connected_at is not None else None
+    reconnected_after_stable = bool(
+        connected_after is not None
+        and any(
+            item["state"] == "reconnecting" and float(item["seconds"]) > connected_after
+            for item in transitions
+        )
+    )
     passed = bool(
         connected_at is not None
         and heartbeat_times
         and not failures
-        and not any(item["state"] == "reconnecting" for item in transitions)
+        and not reconnected_after_stable
     )
     report = {
         "passed": passed,
         "duration_seconds": round(elapsed, 3),
         "connected_after_seconds": (
-            round(connected_at - started, 3) if connected_at is not None else None
+            round(connected_after, 3) if connected_after is not None else None
         ),
         "heartbeat_replies": len(heartbeat_times),
         "maximum_heartbeat_interval_seconds": round(max(intervals), 3) if intervals else None,
