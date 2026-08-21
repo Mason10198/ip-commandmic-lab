@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ip-commandmic-lab"
+version = "0.1.0a29"
+description = "Radio-side hardware lab and protocol exerciser for IP CommandMic endpoints"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "Mason Nelson (N5LSN)"}]
+license = "MIT"
+license-files = ["LICENSE", "NOTICE.md"]
+dependencies = [
+  "ip-commandmic>=0.2.0a21,<0.3",
+  "miniaudio>=1.71,<2",
+  "pywebview>=6.2,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+build = ["pyinstaller>=6,<7"]
+
+[tool.setuptools.data-files]
+"." = ["LICENSE", "NOTICE.md"]
+
+[project.scripts]
+ip-commandmic-lab = "ip_commandmic_lab.app:main"
+
+[project.urls]
+Repository = "https://github.com/mason10198/ip-commandmic-lab"
+Protocol = "https://github.com/mason10198/ip-commandmic"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ip_commandmic_lab = ["assets/*.html", "assets/*.svg"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

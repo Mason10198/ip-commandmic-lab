@@ -1,0 +1,15 @@
+/.venv/
+/.venv.pre-rename/
+/.pytest_cache/
+/artifacts/
+/build/
+/dist/
+/release/
+/.packaging/
+/.packaging.pre-rename/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*.jsonl
+*.wav
+*.spec

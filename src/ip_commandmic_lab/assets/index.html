@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>IP CommandMic Lab</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1016;--panel:#141b24;--panel2:#1a2430;--line:#303d4b;--text:#eef5f8;--muted:#91a3b1;--cyan:#42c7ed;--cyan2:#168eaf;--green:#67d391;--red:#fa6974;--amber:#f4b64c}
+    *{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:13px/1.35 "Segoe UI",system-ui,sans-serif}
+    button,input,select,textarea{font:inherit}button{padding:7px 11px;border:1px solid #405064;border-radius:6px;background:#202b38;color:var(--text);cursor:pointer}button:hover{border-color:var(--cyan)}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--cyan2);border-color:#2ebcde}button.danger{color:#ffadb4}.wide{grid-column:1/-1}
+    @keyframes record-pulse{50%{background:#70232c;box-shadow:0 0 13px #fa697477}}@keyframes parrot-record-pulse{50%{background:#70232c;box-shadow:0 0 13px #fa697477}}@keyframes parrot-play-pulse{50%{background:#155269;box-shadow:0 0 13px #42c7ed77}}button.recording-pulse{color:#fff;border-color:var(--red);animation:record-pulse 1s ease-in-out infinite}button.parrot-recording{color:#fff;border-color:var(--red);animation:parrot-record-pulse 1s ease-in-out infinite}button.parrot-playing{color:#fff;border-color:var(--cyan);animation:parrot-play-pulse .7s ease-in-out infinite}
+    header{height:54px;display:flex;align-items:center;gap:18px;padding:0 16px;background:#111821;border-bottom:1px solid var(--line)}h1{font-size:17px;margin:0}.subtitle{color:var(--muted);font-size:11px}.status{margin-left:auto;display:flex;align-items:center;gap:8px}.status-dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red)}.status.connected .status-dot{background:var(--green);box-shadow:0 0 8px var(--green)}
+    .connection{height:72px;display:grid;grid-template-columns:repeat(6,minmax(90px,1fr)) auto;gap:8px;align-items:end;padding:8px 12px;background:#101720;border-bottom:1px solid var(--line)}label.field{display:grid;gap:3px;color:var(--muted);font-size:10px}input,select,textarea{width:100%;border:1px solid #3a495a;border-radius:5px;background:#0a0f15;color:var(--text);padding:6px 7px}input:focus,select:focus,textarea:focus{outline:2px solid #42c7ed2c;border-color:var(--cyan)}.connection-control{display:grid;gap:3px;min-width:178px}.connection-actions{display:flex;gap:6px}.connection-result{height:14px;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inline-check{display:flex;gap:6px;align-items:center;color:var(--text);font-size:11px}.inline-check input{width:auto}
+    .tabs{height:42px;display:flex;gap:2px;padding:5px 12px 0;background:#101720;border-bottom:1px solid var(--line)}.tab{border:0;border-radius:6px 6px 0 0;background:transparent;color:var(--muted);padding:8px 17px}.tab.active{background:var(--panel2);color:#fff;border:1px solid var(--line);border-bottom-color:var(--panel2)}
+    .workspace{height:calc(100% - 168px);overflow:hidden}.page{display:none;height:100%;overflow:auto;padding:10px}.page.active{display:block}.card{border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden;min-width:0}.card-title{display:flex;align-items:center;justify-content:space-between;min-height:38px;padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.card-body{padding:11px}.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.result{min-height:17px;color:var(--muted);font-size:10px}.result.error{color:#ff8e97}.note{color:var(--muted);font-size:10px}
+    .commandmic-layout{display:grid;grid-template-columns:minmax(380px,.9fr) minmax(620px,1.35fr) minmax(420px,1fr);gap:10px;align-items:start}.dashboard-column{display:grid;gap:10px;min-width:0}.preview{height:180px;padding:11px;background:#020506}.preview svg{width:100%;height:100%;filter:drop-shadow(0 0 .7px #87eaff)}.preview svg path:not(#path229):not(.lit){opacity:0}.preview svg path.lit{opacity:1;fill:#d9fbff;filter:none!important}.preview svg path.cutout{fill:#020506}.preview svg.blink-off path.blink{opacity:0!important}
+    .text-entry{font:22px ui-monospace,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}.display-options{display:grid;grid-template-columns:1.25fr 1fr;gap:9px;margin-top:9px}.character-blink{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:8px}.character-blink label,.bit-check{display:flex;align-items:center;gap:5px;color:var(--text);font-size:11px}.character-blink label{justify-content:center;padding:6px 2px;border:1px solid #314051;border-radius:5px;background:#0e151d}.character-blink input,.bit-check input{width:auto}
+    .led-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.led-button[data-led=red]{color:#ff8c94}.led-button[data-led=green]{color:#8aeba9}.led-button[data-led=orange]{color:#ffc96b}
+    .indicator-groups{display:grid;grid-template-columns:repeat(3,minmax(190px,1fr));gap:10px}.indicator-card{border:1px solid #2c3947;border-radius:7px;overflow:hidden;background:#10161e}.indicator-head,.indicator-row{display:grid;grid-template-columns:minmax(95px,1fr) 52px 52px;align-items:center}.indicator-head{padding:7px 9px;background:#192330;color:var(--muted);font-size:10px}.indicator-head strong{color:var(--text);font-size:11px}.indicator-row{min-height:29px;padding:3px 9px;border-top:1px solid #222e3a}.indicator-row>span{font-size:11px}.bit-check{justify-content:center}.bit-check span{display:none}
+    .send-bar{display:flex;gap:8px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:7px;background:#18222e}.send-bar .result{margin-left:auto}
+    details.advanced{min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}details.advanced summary{cursor:pointer;padding:10px 12px;background:var(--panel2);font-weight:650}.bytes{display:grid;grid-template-columns:repeat(17,minmax(38px,1fr));gap:4px;padding:10px}.byte{min-width:0;padding:5px 2px;text-align:center;font:11px Consolas,monospace}.byte-label{display:block;text-align:center;color:var(--muted);font-size:9px}.advanced-actions{padding:0 10px 10px}
+    .buttons{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}.button-state{padding:6px 3px;text-align:center;border:1px solid #354353;border-radius:5px;background:#0e151d;color:var(--muted)}.button-state.on{background:#155269;border-color:var(--cyan);color:#fff;box-shadow:0 0 9px #45c6eb55}.button-state.ptt.on{background:#70232c;border-color:var(--red)}canvas.spectrum{display:block;width:100%;height:190px;background:#060a0f;border:1px solid #2b3744;border-radius:6px}.meters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.meter{height:9px;border-radius:5px;background:#090d12;overflow:hidden}.meter span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width 35ms linear}.audio-send-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.volume-label{display:flex;justify-content:space-between}.parrot-active{color:var(--amber);border-color:var(--amber)}.record-destination{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;align-items:end;margin-top:8px}.record-actions{display:flex;gap:7px;align-items:center;margin-top:7px}.record-actions .result{margin-left:auto}
+    .protocol-layout{display:grid;grid-template-columns:minmax(500px,1.8fr) minmax(320px,1fr);gap:10px;height:100%}.events{height:calc(100vh - 245px);min-height:400px;overflow:auto;background:#080d12;padding:9px;font:11px/1.5 Consolas,monospace;white-space:pre-wrap}.raw{height:130px;font:11px Consolas,monospace;resize:vertical}
+    .startup{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--bg);transition:opacity .14s ease}.startup.ready{opacity:0;pointer-events:none}.startup-box{text-align:center}.startup-title{font-size:19px;font-weight:650}.startup-detail{margin-top:7px;color:var(--muted)}.spinner{width:28px;height:28px;margin:0 auto 15px;border:3px solid #263541;border-top-color:var(--cyan);border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:1499px){.commandmic-layout{grid-template-columns:minmax(360px,.85fr) minmax(600px,1.4fr)}.audio-column{grid-column:1/-1;grid-template-columns:1fr 1fr}.preview{height:200px}}
+    @media(max-width:1100px){.connection{grid-template-columns:repeat(3,1fr) auto;height:118px}.workspace{height:calc(100% - 214px)}.commandmic-layout{grid-template-columns:1fr}.audio-column{grid-column:auto;grid-template-columns:1fr}.indicator-groups{grid-template-columns:repeat(2,1fr)}.bytes{grid-template-columns:repeat(10,1fr)}.protocol-layout{grid-template-columns:1fr}.events{height:420px}}
+  </style>
+</head>
+<body>
+  <div id="startup" class="startup"><div class="startup-box"><div class="spinner"></div><div class="startup-title">IP CommandMic Lab</div><div class="startup-detail">Starting protocol interface…</div></div></div>
+  <header>
+    <div><h1>IP CommandMic Lab</h1><div class="subtitle">Radio-side protocol laboratory for physical and software CommandMics</div></div>
+    <div id="status" class="status"><span class="status-dot"></span><span id="statusText">Disconnected</span></div>
+  </header>
+  <section class="connection" aria-label="Connection and startup options">
+    <label class="field">Local / radio IP<input id="local_ip" value="192.168.0.1"></label>
+    <label class="field">CommandMic IP<input id="mic_ip" value="192.168.0.2"></label>
+    <label class="field">TCP port<input id="control_port" type="number" value="52001"></label>
+    <label class="field">UDP audio port<input id="audio_port" type="number" value="50000"></label>
+    <label class="field">Microphone gain (live)<select id="mic_gain"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+    <label class="field">Startup backlight<select id="backlight"><option>off</option><option>dim</option><option selected>on</option></select></label>
+    <div class="connection-control"><div class="connection-actions"><button id="connect" class="primary">Connect</button><button id="disconnect">Disconnect</button></div><div id="connectResult" class="connection-result"></div></div>
+  </section>
+  <nav class="tabs" aria-label="Test workspaces">
+    <button class="tab active" data-tab="display">CommandMic</button>
+    <button class="tab" data-tab="protocol">Protocol &amp; raw data</button>
+  </nav>
+  <main class="workspace">
+    <section id="page-display" class="page active">
+      <div class="commandmic-layout">
+        <div class="dashboard-column display-column">
+          <section class="card">
+            <div class="card-title">Live display preview</div>
+            <div class="preview" id="preview">__DISPLAY_SVG__</div>
+            <div class="card-body">
+              <label class="field">Primary text (8 characters; periods attach to the preceding character)<input id="displayText" class="text-entry" maxlength="16" value="--TEST--"></label>
+              <div class="display-options">
+                <label class="field">Verified visual mode<select id="visualMode"></select></label>
+                <div class="note">Blink timing is generated by the CommandMic. The preview uses a representative 1-second cycle.</div>
+              </div>
+              <div class="note" style="margin-top:9px">Blink primary characters</div>
+              <div id="characterBlink" class="character-blink"></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-title">Device outputs</div>
+            <div class="card-body">
+              <div class="note">Status LED</div><div id="ledButtons" class="led-buttons" style="margin-top:6px"></div>
+              <div class="note" style="margin-top:12px">Backlight (immediate)</div><div id="backlightButtons" class="led-buttons" style="grid-template-columns:repeat(3,1fr);margin-top:6px"></div>
+            </div>
+          </section>
+          <details id="advancedDisplay" class="advanced">
+            <summary>Advanced: all 68 display bytes</summary>
+            <div class="note" style="padding:10px 10px 0">Lossless byte editor for mapped and still-unknown fields. Values are hexadecimal; offsets 65–67 remain visibly unresolved.</div>
+            <div id="bytes" class="bytes"></div>
+            <div class="advanced-actions actions"><button id="rawZero">All bytes 00</button><button id="rawFF">All bytes FF</button></div>
+          </details>
+        </div>
+        <div class="dashboard-column controls-column">
+          <div id="indicatorGroups" class="indicator-groups"></div>
+          <div class="send-bar">
+            <button id="sendDisplay" class="primary">Send display state</button>
+            <button id="baseline">Baseline</button>
+            <button id="clearDisplay">Clear</button>
+            <button id="allOn">All segments</button>
+            <span id="displayResult" class="result"></span>
+          </div>
+          <section class="card">
+            <div class="card-title">Live CommandMic controls <span class="note">Press and hold states shown in real time</span></div>
+            <div class="card-body"><div id="buttons" class="buttons"></div></div>
+          </section>
+        </div>
+        <div class="dashboard-column audio-column">
+          <section class="card">
+            <div class="card-title">Microphone audio spectrum <span class="note">8 kHz PCM · 0–4 kHz</span></div>
+            <div class="card-body">
+              <canvas id="spectrum" class="spectrum" width="900" height="300"></canvas>
+              <div class="meters"><label class="field"><span class="volume-label"><span>Peak</span><strong id="peakValue">−∞ dBFS · 0 samples</strong></span><div class="meter"><span id="peak"></span></div></label><label class="field"><span class="volume-label"><span>RMS</span><strong id="rmsValue">−∞ dBFS · 0.0 samples</strong></span><div class="meter"><span id="rms"></span></div></label></div>
+              <div id="audioStats" class="result">0 packets · 0.00 s received</div>
+              <div class="record-destination"><label class="field">Recording output WAV<input id="recordPath" value="commandmic_recording.wav"></label><button id="browseRecordingFolder">Choose folder…</button></div>
+              <div class="record-actions"><button id="recordToggle" class="danger">Record</button><div id="recordResult" class="result"></div></div>
+            </div>
+          </section>
+          <section class="card">
+            <div class="card-title">Audio to CommandMic</div>
+            <div class="card-body audio-send-grid">
+              <label class="field wide"><span class="volume-label"><span>Speaker volume (physical F2/F3 also adjust)</span><strong id="speakerVolumeValue">22</strong></span><input id="speakerVolume" type="range" value="22" min="0" max="32"></label>
+              <div class="actions wide"><button id="parrotMode">Enable Parrot mode</button><span id="parrotStatus" class="result">Disabled</span></div>
+              <label class="field">Tone frequency (Hz)<input id="toneFrequency" type="number" value="1000" min="20" max="3500"></label>
+              <label class="field">Level (dBFS)<input id="toneLevel" type="number" value="-24" min="-60" max="-6"></label>
+              <label class="field">Duration (seconds)<input id="toneDuration" type="number" value="1" min=".02" max="30" step=".1"></label>
+              <div class="actions wide"><button id="sendTone" class="primary">Send tone</button></div>
+              <label class="field wide">Audio file<input id="wavPath" placeholder="WAV, MP3, FLAC, OGG or AIFF"></label>
+              <div class="actions wide"><button id="browseAudio">Browse…</button><button id="sendWav">Play audio file</button><span id="audioSendResult" class="result"></span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+    <section id="page-protocol" class="page">
+      <div class="protocol-layout">
+        <section class="card"><div class="card-title">Protocol events</div><div id="events" class="events"></div></section>
+        <section class="card"><div class="card-title">Raw protocol frame</div><div class="card-body"><textarea id="rawFrame" class="raw" placeholder="One complete F3/F5…FD frame in hexadecimal"></textarea><div class="actions"><button id="sendRaw">Validate &amp; send</button></div><div id="rawResult" class="result"></div><p class="note">Advanced escape hatch: sends exactly one correctly framed message after library validation. Unknown semantics are preserved.</p></div></section>
+      </div>
+    </section>
+  </main>
+  <script>(()=>{"use strict";
+    const $=id=>document.getElementById(id),CAPABILITIES=__CAPABILITIES_JSON__,INITIAL_DISPLAY=__INITIAL_DISPLAY_JSON__;
+    let raw=new Uint8Array(68),lastRevision=-1,lastAudioPackets=0,eventCount=0,bridgeReady=false,bytesBuilt=false,parrotEnabled=false,recording=false,volumeDragging=false;
+    const SPECTRUM_BARS=40,DOT_PATHS=CAPABILITIES.display_svg_decimal_point_paths,spectrumTarget=new Float32Array(SPECTRUM_BARS),spectrumLevel=new Float32Array(SPECTRUM_BARS),spectrumPeak=new Float32Array(SPECTRUM_BARS);let spectrumUpdated=0,spectrumFrame=performance.now();
+    const SEG={g2:0,b:1,g1:2,i:3,e:4,c:5,l:6,f:7,k:8,a:9,d:10,j:11,h:12,m:13};
+    const GL={" ":[],"-":["g1","g2"],"_":["d"],"0":["a","b","c","d","e","f"],"1":["b","c"],"2":["a","b","d","e","g1","g2"],"3":["a","b","c","d","g1","g2"],"4":["b","c","f","g1","g2"],"5":["a","c","d","f","g1","g2"],"6":["a","c","d","e","f","g1","g2"],"7":["a","b","c"],"8":["a","b","c","d","e","f","g1","g2"],"9":["a","b","c","d","f","g1","g2"],A:["a","b","c","e","f","g1","g2"],B:["a","b","c","d","e","f","g1","g2"],C:["a","d","e","f"],D:["a","b","c","d","i","l"],E:["a","d","e","f","g1","g2"],F:["a","e","f","g1","g2"],G:["a","c","d","e","f","g2"],H:["b","c","e","f","g1","g2"],I:["a","d","i","l"],J:["b","c","d","e"],K:["e","f","g1","j","k"],L:["d","e","f"],M:["b","c","e","f","h","j"],N:["b","c","e","f","h","k"],O:["a","b","c","d","e","f"],P:["a","b","e","f","g1","g2"],Q:["a","b","c","d","e","f","k"],R:["a","b","e","f","g1","g2","k"],S:["a","c","d","f","g1","g2"],T:["a","i","l"],U:["b","c","d","e","f"],V:["e","f","j","k"],W:["b","c","d","e","f","k","m"],X:["h","j","k","m"],Y:["h","j","l"],Z:["a","d","j","m"]};
+    const ICON={bell:[230],encryption:[231,232],scan:[233],scan_target:[234],bluetooth:[235],shift:[236],audible:[237,238,239,240],rssi:[244],rssi_bar_1:[243],rssi_bar_2:[242],rssi_bar_3:[241],low_power:[245,246,247],dealer_p1:[248,249,250],dealer_p2:[251,252,253],dealer_p3:[254,255,256],dealer_p4:[257,258,259],message:[260,261,262],lone_worker:[263,264,265,266,267],gps:[268],talk_around:[269]};
+    const BUTTONS=[['ptt','PTT'],['power','Power'],['emergency','Emergency'],['f1','F1 / Monitor'],['volume_up','F2 / Vol. Up'],['volume_down','F3 / Vol. Dn'],['p1','P1'],['p2','P2'],['p3','P3'],['p4','P4'],['up','Up'],['down','Down'],['left','Left'],['right','Right'],...Array.from({length:10},(_,i)=>[`keypad_${i}`,String(i)]),['keypad_star','*'],['keypad_hash','#']];
+    async function call(name,...args){try{return await window.pywebview.api[name](...args)}catch(e){return{ok:false,error:String(e)}}}
+    const hex=()=>[...raw].map(v=>v.toString(16).padStart(2,'0')).join('');
+    function setResult(id,result){const n=$(id);n.textContent=result?.ok?(result.result?.path||'Done'):result?.error||'Failed';n.className='result'+(result?.ok?'':' error')}
+    function setBit(offset,mask,on){raw[offset]=on?raw[offset]|mask:raw[offset]&~mask;syncInputs();preview()}
+    function dotSelected(pos){return pos<=4?Boolean(raw[58]&(1<<(4-pos))):Boolean(raw[59]&(1<<(12-pos)))}
+    function syncDisplayTextFromRaw(){let last=0;for(let i=0;i<8;i++)if(raw[i]||dotSelected(i+1))last=i+1;let text='';for(let i=0;i<last;i++){text+=raw[i]?String.fromCharCode(raw[i]):' ';if(dotSelected(i+1))text+='.'}$('displayText').value=text}
+    function syncText(){const entered=$('displayText').value.toUpperCase(),chars=[],points=new Set;for(const ch of entered){if(ch==='.'&&chars.length){points.add(chars.length);continue}if(chars.length<8)chars.push(ch)}for(let i=0;i<8;i++)raw[i]=i<chars.length?chars[i].charCodeAt(0):0;raw[58]&=0xf0;raw[59]&=0x0f;for(const pos of points){if(pos<=4)raw[58]|=1<<(4-pos);else raw[59]|=1<<(12-pos)}$('displayText').value=chars.map((ch,index)=>ch+(points.has(index+1)?'.':'')).join('');syncInputs();preview()}
+    function syncInputs(){document.querySelectorAll('.byte').forEach((n,i)=>n.value=raw[i].toString(16).padStart(2,'0'));document.querySelectorAll('[data-offset][data-mask]').forEach(n=>n.checked=Boolean(raw[+n.dataset.offset]&+n.dataset.mask));$('visualMode').value=String(raw[64])}
+    function buildBytes(){if(bytesBuilt)return;bytesBuilt=true;const host=$('bytes');for(let i=0;i<CAPABILITIES.display_size;i++){const w=document.createElement('label');w.innerHTML=`<span class="byte-label">${i}</span>`;const n=document.createElement('input');n.className='byte';n.maxLength=2;n.value=raw[i].toString(16).padStart(2,'0');n.onchange=()=>{raw[i]=parseInt(n.value,16)||0;if(i<CAPABILITIES.primary_text_size||i===58||i===59)syncDisplayTextFromRaw();syncInputs();preview()};w.append(n);host.append(w)}}
+    function makeCheckbox(control,title){const label=document.createElement('label');label.className='bit-check';label.title=title;const input=document.createElement('input');input.type='checkbox';input.dataset.offset=control.offset;input.dataset.mask=control.mask;input.onchange=()=>{setBit(control.offset,control.mask,input.checked);if(control.key.startsWith('decimal_')&&control.offset<60)syncDisplayTextFromRaw()};label.append(input);label.insertAdjacentHTML('beforeend',`<span>${title}</span>`);return label}
+    function buildIndicatorGroup(title,controls,blinkMap){const card=document.createElement('section');card.className='indicator-card';card.innerHTML=`<div class="indicator-head"><strong>${title}</strong><span>Enable</span><span>Blink</span></div>`;for(const control of controls){const row=document.createElement('div');row.className='indicator-row';const name=document.createElement('span');name.textContent=control.name;row.append(name,makeCheckbox(control,`${control.name} enabled`),makeCheckbox(blinkMap.get(control.key),`${control.name} blink`));card.append(row)}return card}
+    function setup(){
+      raw=new Uint8Array(CAPABILITIES.display_size);
+      const modes=$('visualMode');for(const mode of CAPABILITIES.display_visual_modes){const option=document.createElement('option');option.value=mode.value;option.textContent=mode.name;modes.append(option)}modes.onchange=()=>{raw[64]=+modes.value;syncInputs();preview()};
+      const blinkMap=new Map(CAPABILITIES.display_blink_bits.map(item=>[item.key,item]));const steady=CAPABILITIES.display_bits;
+      const groups=[['Primary status',steady.filter(x=>x.offset===56)],['Feature icons',steady.filter(x=>x.offset===57)],['Keys & decimal points',steady.filter(x=>x.offset===58||x.offset===59)]];
+      for(const [title,items] of groups)$('indicatorGroups').append(buildIndicatorGroup(title,items,blinkMap));
+      for(const control of CAPABILITIES.character_blink){const label=document.createElement('label');label.innerHTML=`<input type="checkbox" data-offset="${control.offset}" data-mask="${control.mask}">${control.position}`;label.firstChild.onchange=e=>setBit(control.offset,control.mask,e.target.checked);$('characterBlink').append(label)}
+      for(const color of CAPABILITIES.status_led_colors){const n=document.createElement('button');n.className='led-button';n.dataset.led=color;n.textContent=color[0].toUpperCase()+color.slice(1);n.onclick=async()=>setResult('displayResult',await call('send_led',color));$('ledButtons').append(n)}
+      for(const state of ['off','dim','on']){const n=document.createElement('button');n.textContent=state[0].toUpperCase()+state.slice(1);n.onclick=async()=>setResult('displayResult',await call('send_backlight',state));$('backlightButtons').append(n)}
+      for(const [key,label] of BUTTONS){const n=document.createElement('div');n.className='button-state'+(key==='ptt'?' ptt':'');n.dataset.button=key;n.textContent=label;$('buttons').append(n)}
+      document.querySelectorAll('.tab').forEach(tab=>tab.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===tab));document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===`page-${tab.dataset.tab}`))});
+      $('advancedDisplay').ontoggle=()=>{if($('advancedDisplay').open)buildBytes()};baseline(true)
+    }
+    function baseline(initial=false){raw.fill(0);const text='--TEST--';$('displayText').value=text;for(let i=0;i<text.length;i++)raw[i]=text.charCodeAt(i);syncInputs();initial?renderDecoded(INITIAL_DISPLAY):preview()}
+    const path=n=>document.getElementById(`path${n}`);
+    function clearPreview(){for(let n=230;n<=389;n++){const e=path(n);if(e){e.classList.remove('lit','blink','cutout');e.style.removeProperty('opacity');e.style.removeProperty('fill')}}}
+    function light(n,blink=false){const e=path(n);if(!e)return;e.classList.add('lit');e.style.setProperty('opacity','1');e.style.setProperty('fill',n===261||n===262?'#020506':'#d9fbff');if(blink)e.classList.add('blink');if(n===261||n===262)e.classList.add('cutout')}
+    function segment(pos,name,blink=false){light(270+(pos-1)*14+SEG[name],blink)}function segments(pos,names,blink=false){for(const name of names)segment(pos,name,blink)}function chr(pos,ch,blink=false){segments(pos,GL[ch]||[],blink)}function icon(name,blink=false){for(const n of(ICON[name]||[]))light(n,blink)}
+    function renderDecoded(d){
+      clearPreview();const mode=d.verified_offset64_visual_state;if(mode==='blank_display')return;if(mode==='full_segment_pattern'){for(let n=230;n<=389;n++)light(n);return}
+      const pattern=d.verified_offset64_pattern;if(pattern){for(const name of pattern.indicators)icon(name);pattern.segments_by_position.forEach((names,index)=>segments(index+1,names));for(const point of pattern.decimal_points)light(DOT_PATHS[point-1]);return}
+      const blinkingIcons=new Set([...(d.verified_blinking_indicators||[]),...(d.verified_secondary_blinking_indicators||[]),...(d.verified_blinking_dealer_key_icons||[])]);
+      for(const name of(d.verified_indicators||[]))icon(name,blinkingIcons.has(name));for(const bar of(d.verified_rssi_bars||[]))light(244-bar,(d.verified_blinking_rssi_bars||[]).includes(bar));
+      const charBlink=new Set(d.verified_blinking_character_positions||[]),text=String(d.primary_text||'').toUpperCase().padEnd(8).slice(0,8);
+      [...text].forEach((ch,index)=>chr(index+1,ch,charBlink.has(index+1)));
+      for(const point of(d.verified_decimal_points||[]))light(DOT_PATHS[point-1],(d.verified_blinking_decimal_points||[]).includes(point))
+    }
+    async function preview(){if(!bridgeReady)return;const result=await call('decode_display',hex());if(result?.ok)renderDecoded(result.result)}
+    function updateSpectrum(wave){const n=128,re=new Float64Array(n),im=new Float64Array(n),source=wave||[],count=Math.min(n,source.length),pad=n-count,start=source.length-count;for(let i=0;i<count;i++)re[pad+i]=source[start+i]*(.5-.5*Math.cos(2*Math.PI*(pad+i)/(n-1)));for(let i=1,j=0;i<n;i++){let bit=n>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}for(let len=2;len<=n;len<<=1){const angle=-2*Math.PI/len,wr0=Math.cos(angle),wi0=Math.sin(angle);for(let base=0;base<n;base+=len){let wr=1,wi=0;for(let j=0;j<len/2;j++){const even=base+j,odd=even+len/2,tr=wr*re[odd]-wi*im[odd],ti=wr*im[odd]+wi*re[odd];re[odd]=re[even]-tr;im[odd]=im[even]-ti;re[even]+=tr;im[even]+=ti;const next=wr*wr0-wi*wi0;wi=wr*wi0+wi*wr0;wr=next}}}for(let bar=0;bar<SPECTRUM_BARS;bar++){const low=60*Math.pow(4000/60,bar/SPECTRUM_BARS),high=60*Math.pow(4000/60,(bar+1)/SPECTRUM_BARS),lo=Math.max(1,Math.floor(low*n/8000)),hi=Math.min(n/2,Math.max(lo,Math.ceil(high*n/8000)));let magnitude=0;for(let bin=lo;bin<=hi;bin++)magnitude=Math.max(magnitude,Math.hypot(re[bin],im[bin])*4/n);const db=20*Math.log10(magnitude+1e-7);spectrumTarget[bar]=Math.max(0,Math.min(1,(db+72)/66))}spectrumUpdated=performance.now()}
+    function animateSpectrum(now){const canvas=$('spectrum'),dt=Math.min(.05,Math.max(.001,(now-spectrumFrame)/1000));spectrumFrame=now;if(now-spectrumUpdated>110)for(let i=0;i<SPECTRUM_BARS;i++)spectrumTarget[i]*=Math.exp(-dt*6);for(let i=0;i<SPECTRUM_BARS;i++){const target=spectrumTarget[i],current=spectrumLevel[i];spectrumLevel[i]=target>current?current+(target-current)*(1-Math.exp(-dt*24)):Math.max(target,current-dt*.8);spectrumPeak[i]=spectrumLevel[i]>=spectrumPeak[i]?spectrumLevel[i]:Math.max(spectrumLevel[i],spectrumPeak[i]-dt*.28)}if(canvas.offsetParent!==null){const rect=canvas.getBoundingClientRect(),width=Math.max(1,Math.round(rect.width)),height=Math.max(1,Math.round(rect.height)),dpr=Math.min(2,window.devicePixelRatio||1);if(canvas.width!==Math.round(width*dpr)||canvas.height!==Math.round(height*dpr)){canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr)}const x=canvas.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,width,height);x.fillStyle='#060a0f';x.fillRect(0,0,width,height);const graphHeight=height-18;x.strokeStyle='#182634';x.lineWidth=1;for(let line=1;line<4;line++){const y=Math.round(graphHeight*line/4)+.5;x.beginPath();x.moveTo(0,y);x.lineTo(width,y);x.stroke()}const gap=2,barWidth=Math.max(2,(width-gap*(SPECTRUM_BARS+1))/SPECTRUM_BARS),gradient=x.createLinearGradient(0,graphHeight,0,0);gradient.addColorStop(0,'#168eaf');gradient.addColorStop(.42,'#42c7ed');gradient.addColorStop(.72,'#67d391');gradient.addColorStop(.9,'#f4b64c');gradient.addColorStop(1,'#fa6974');x.fillStyle=gradient;for(let i=0;i<SPECTRUM_BARS;i++){const left=gap+i*(barWidth+gap),barHeight=Math.max(1,spectrumLevel[i]*graphHeight),top=graphHeight-barHeight;x.fillRect(left,top,barWidth,barHeight);const peakY=Math.max(0,graphHeight-spectrumPeak[i]*graphHeight);x.fillStyle='#effcff';x.fillRect(left,peakY,barWidth,2);x.fillStyle=gradient}x.fillStyle='#718797';x.font='10px Segoe UI, sans-serif';x.textBaseline='bottom';x.textAlign='left';x.fillText('60 Hz',3,height-2);x.textAlign='center';x.fillText('1 kHz',width*Math.log(1000/60)/Math.log(4000/60),height-2);x.textAlign='right';x.fillText('4 kHz',width-3,height-2)}requestAnimationFrame(animateSpectrum)}
+    const dbfs=value=>value>0?`${(20*Math.log10(value)).toFixed(1)} dBFS`:'−∞ dBFS';
+    async function poll(){const s=await call('snapshot');if(s&&s.revision!==lastRevision){lastRevision=s.revision;$('statusText').textContent=s.connection;$('status').classList.toggle('connected',s.connection==='connected');document.querySelectorAll('.button-state').forEach(n=>n.classList.toggle('on',n.dataset.button==='ptt'?s.ptt:Boolean(s.buttons[n.dataset.button])));const peak=Math.max(0,Number(s.audio_peak)||0),rms=Math.max(0,Number(s.audio_rms)||0);$('peak').style.width=`${Math.min(100,peak*100)}%`;$('rms').style.width=`${Math.min(100,rms*100)}%`;$('peakValue').textContent=`${dbfs(peak)} · ${Math.round(peak*32768)} samples`;$('rmsValue').textContent=`${dbfs(rms)} · ${(rms*32768).toFixed(1)} samples`;recording=Boolean(s.recording);$('recordToggle').textContent=recording?'Save recording':'Record';$('recordToggle').classList.toggle('recording-pulse',recording);$('recordPath').disabled=recording;$('browseRecordingFolder').disabled=recording;parrotEnabled=Boolean(s.parrot_enabled);const parrotStatus=String(s.parrot_status||'disabled');$('parrotMode').textContent=parrotEnabled?'Disable Parrot mode':'Enable Parrot mode';$('parrotMode').classList.toggle('parrot-active',parrotEnabled);$('parrotMode').classList.toggle('parrot-recording',parrotStatus==='recording');$('parrotMode').classList.toggle('parrot-playing',parrotStatus==='playing');$('parrotStatus').textContent=parrotEnabled?`${parrotStatus} · ${s.parrot_packets} packets`:'Disabled';if(!volumeDragging){$('speakerVolume').value=s.speaker_volume;$('speakerVolumeValue').textContent=s.speaker_volume}const audioPackets=Number(s.audio_packets)||0,recordedPackets=Number(s.recorded_packets)||0;$('audioStats').textContent=`${audioPackets} packets · ${(audioPackets*.02).toFixed(2)} s received${recording?` · ${recordedPackets} packets / ${(recordedPackets*.02).toFixed(2)} s recording`:''}`;if(audioPackets!==lastAudioPackets){if(audioPackets>lastAudioPackets)updateSpectrum(s.waveform);else updateSpectrum([]);lastAudioPackets=audioPackets}else if(!s.ptt&&(!s.waveform||!s.waveform.length))updateSpectrum([])}const active=s&&(s.connection!=='disconnected'||s.recording);setTimeout(poll,active?40:400)}
+    async function pollEvents(){const data=await call('protocol_events'),events=data?.events||[];if(events.length!==eventCount){eventCount=events.length;$('events').textContent=events.map(e=>`${new Date(e.time*1000).toLocaleTimeString()} ${e.event}`).join('\n');$('events').scrollTop=$('events').scrollHeight}setTimeout(pollEvents,500)}
+    $('displayText').oninput=syncText;$('baseline').onclick=()=>baseline();$('clearDisplay').onclick=()=>{raw.fill(0);$('displayText').value='';syncInputs();preview()};$('allOn').onclick=()=>{raw.fill(0);raw[64]=1;$('displayText').value='';syncInputs();preview()};$('rawZero').onclick=()=>{raw.fill(0);$('displayText').value='';syncInputs();preview()};$('rawFF').onclick=()=>{raw.fill(255);$('displayText').value='ÿÿÿÿÿÿÿÿ';syncInputs();preview()};$('sendDisplay').onclick=async()=>setResult('displayResult',await call('send_display',hex()));
+    $('connect').onclick=async()=>setResult('connectResult',await call('connect',{local_ip:$('local_ip').value,mic_ip:$('mic_ip').value,control_port:+$('control_port').value,audio_port:+$('audio_port').value,mic_gain:+$('mic_gain').value,backlight:$('backlight').value,speaker_volume:+$('speakerVolume').value}));$('disconnect').onclick=async()=>setResult('connectResult',await call('disconnect'));$('mic_gain').onchange=async()=>setResult('connectResult',await call('set_mic_gain',+$('mic_gain').value));$('speakerVolume').onpointerdown=()=>{volumeDragging=true};$('speakerVolume').oninput=()=>{volumeDragging=true;$('speakerVolumeValue').textContent=$('speakerVolume').value};$('speakerVolume').onchange=async()=>{const level=+$('speakerVolume').value;setResult('audioSendResult',await call('set_speaker_volume',level));volumeDragging=false};$('speakerVolume').onpointercancel=()=>{volumeDragging=false};$('parrotMode').onclick=async()=>setResult('audioSendResult',await call('set_parrot',!parrotEnabled));$('sendRaw').onclick=async()=>setResult('rawResult',await call('send_raw',$('rawFrame').value.replace(/\s/g,'')));$('sendTone').onclick=async()=>setResult('audioSendResult',await call('send_tone',+$('toneFrequency').value,+$('toneLevel').value,+$('toneDuration').value));$('browseAudio').onclick=async()=>{const r=await call('browse_audio_file');if(r?.ok&&r.result)$('wavPath').value=r.result;else if(r&&!r.ok)setResult('audioSendResult',r)};$('sendWav').onclick=async()=>setResult('audioSendResult',await call('send_wav',$('wavPath').value));
+    $('browseRecordingFolder').onclick=async()=>{const r=await call('browse_recording_folder',$('recordPath').value);if(r?.ok&&r.result)$('recordPath').value=r.result;else if(r&&!r.ok)setResult('recordResult',r)};$('recordToggle').onclick=async()=>{const result=recording?await call('stop_recording'):await call('start_recording',$('recordPath').value);setResult('recordResult',result)};
+    async function finishStartup(){const s=await call('snapshot');if(!s||s.error){setTimeout(waitForBridge,50);return}bridgeReady=true;renderDecoded(INITIAL_DISPLAY);$('startup').classList.add('ready');setTimeout(()=>$('startup').remove(),180);poll();pollEvents()}
+    function syncBlinkClock(){const svg=document.querySelector('.preview svg');if(svg)svg.classList.toggle('blink-off',Math.floor(Date.now()/500)%2===1);setTimeout(syncBlinkClock,502-Date.now()%500)}
+    function waitForBridge(){if(typeof window.pywebview?.api?.snapshot==='function')finishStartup();else setTimeout(waitForBridge,25)}setup();syncBlinkClock();requestAnimationFrame(animateSpectrum);waitForBridge();
+  })();</script>
+</body>
+</html>
