@@ -1,6 +1,7 @@
 # IP CommandMic Lab
 
-Desktop protocol exerciser for physical and software CommandMic endpoints. It
+Windows reference and conformance application for physical and software
+CommandMic endpoints. It
 can drive the LCD and status LED, observe held buttons and PTT, send audio,
 visualize microphone audio as a smoothed 0–4 kHz spectrum, report peak/RMS in
 dBFS and signed-16-bit PCM units, and record it to WAV
@@ -34,6 +35,13 @@ Status: published, physically accepted `0.1.0-alpha.33` reference/conformance
 client. The unified gateway/PWA is the primary future interface. This
 application acts as a radio-side endpoint, so the real
 radio must be disconnected from the CommandMic under test.
+
+Lab is intentionally a diagnostic endpoint rather than a general automation or
+multi-radio service. Its implementation is a working example for applications
+that use a physical CommandMic as an input/audio device, including future
+radioless-node, accessibility and custom-controller integrations.
+Cross-repository roadmap work is tracked on the
+[IP CommandMic GitHub Project](https://github.com/users/Mason10198/projects/1).
 
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the verified release scope,
 runtime requirements and protocol-dependent functionality that remains open.
