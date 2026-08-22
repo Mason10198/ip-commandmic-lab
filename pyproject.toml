@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ip-commandmic-lab"
 version = "0.1.0a33"
-description = "Radio-side hardware lab and protocol exerciser for IP CommandMic endpoints"
+description = "Windows app for operating and testing a physical IP CommandMic without its radio"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{name = "Mason Nelson (N5LSN)"}]
@@ -28,6 +28,7 @@ build = ["pyinstaller>=6,<7"]
 ip-commandmic-lab = "ip_commandmic_lab.app:main"
 
 [project.urls]
+Download = "https://github.com/mason10198/ip-commandmic-lab/releases/latest"
 Repository = "https://github.com/mason10198/ip-commandmic-lab"
 Protocol = "https://github.com/mason10198/ip-commandmic"
 

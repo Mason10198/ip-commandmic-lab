@@ -1,115 +1,177 @@
 # IP CommandMic Lab
 
-Windows reference and conformance application for physical and software
-CommandMic endpoints. It
-can drive the LCD and status LED, observe held buttons and PTT, send audio,
-visualize microphone audio as a smoothed 0–4 kHz spectrum, report peak/RMS in
-dBFS and signed-16-bit PCM units, and record it to WAV
-with a native output-folder picker. Parrot mode captures one physical PTT hold
-in memory and immediately plays it back after release while displaying
-`-PARROT-`. The CommandMic dashboard can also browse
-for and play WAV, MP3, FLAC, OGG/Vorbis, and AIFF files through a connected
-CommandMic.
+IP CommandMic Lab is a Windows application for operating and testing a physical
+Icom IP CommandMic without its radio. It turns your PC into the radio-side
+network endpoint so you can inspect buttons and PTT, test the display and LEDs,
+record microphone audio, send audio to the speaker, and experiment with the
+CommandMic protocol.
 
-The unified CommandMic dashboard exposes steady and blinking states for every
-verified indicator, all eight primary-character blink attributes, verified
-whole-LCD visual modes, status LED and backlight control, real-time physical
-control monitoring, live 1–5 microphone gain, 0–32 speaker volume,
-bidirectional audio tests, WAV
-recording, and a lossless
-68-byte advanced editor. At 1920×1080 and larger, all routine controls fit in a
-three-column view. Protocol events and validated raw-frame transmission remain
-in a dedicated second workspace.
+> **Important:** Disconnect the real radio before using Lab. The radio and Lab
+> must not both try to control the same CommandMic.
 
-On connection the app sweeps a standard `0` glyph right-to-left-to-right-to-
-left-to-right while alternating the status LED red and green, plays the quiet
-`chord3up` startup score, and settles on `--TEST--` with all non-text display
-state cleared and the status LED off. This application owns the startup identity; the shared protocol
-package supplies only the generic display, LED and polyphonic-audio operations.
+If you have a **physical CommandMic** and want to connect it to a PC, this is the
+application you want. If you have a **physical radio** and want the PC to act as
+its microphone, use
+[`ip-commandmic-gateway`](https://github.com/Mason10198/ip-commandmic-gateway)
+instead.
 
-This repository contains only the application. Protocol framing, endpoint
-sessions, display models and media handling are provided by
-[`ip-commandmic`](https://github.com/mason10198/ip-commandmic).
+## Windows quick start
 
-Status: published, physically accepted `0.1.0-alpha.33` reference/conformance
-client. The unified gateway/PWA is the primary future interface. This
-application acts as a radio-side endpoint, so the real
-radio must be disconnected from the CommandMic under test.
+You need:
 
-Lab is intentionally a diagnostic endpoint rather than a general automation or
-multi-radio service. Its implementation is a working example for applications
-that use a physical CommandMic as an input/audio device, including future
-radioless-node, accessibility and custom-controller integrations.
+- A 64-bit Windows 10 or Windows 11 PC
+- A physical IP CommandMic
+- A PoE source appropriate for the CommandMic
+- A wired Ethernet adapter connected to the CommandMic's network
+- The real radio disconnected
 
-See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the verified release scope,
-runtime requirements and protocol-dependent functionality that remains open.
+1. Download
+   [`ip-commandmic-lab-0.1.0-alpha.33-windows-x64.zip`](https://github.com/Mason10198/ip-commandmic-lab/releases/download/v0.1.0-alpha.33/ip-commandmic-lab-0.1.0-alpha.33-windows-x64.zip).
+2. Right-click the ZIP, select **Extract All**, and open the extracted folder.
+3. Open the `IPCommandMicLab` folder and run `IPCommandMicLab.exe`.
+4. If Windows Firewall asks, allow access on **Private networks**.
+5. Configure the Ethernet adapter as described below, power the CommandMic,
+   and select **Connect** in Lab.
 
-The endpoint remains passive for ordinary controls after the required neutral
-connection handshake. Received keys are displayed and logged; only physical
-F2/F3 presses update the app's speaker volume and produce the verified
-`VOL nn` overlay. Other keys do not generate zone/channel or function feedback.
-A physical PTT hold is
-answered with the verified TX-active/status transaction because the CommandMic
-will not transmit microphone RTP without it; release receives the verified
-close transaction. Display, LED, backlight, and outbound speaker audio are sent
-only when their corresponding UI controls are activated.
+Lab is portable: it does not need to be installed and the extracted files must
+remain together. Windows normally includes the required Microsoft Edge
+WebView2 runtime. If the application window does not open, install the current
+[WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+and try again.
 
-Speaker volume uses the radio's verified 0-32 range, clamps at both boundaries,
-and mutes digitally at zero. Level 32 is unity; nonzero levels 1–32 span a
-best-effort perceptually uniform 48 dB range. The numeric range and clamps match
-the radio exactly. The gain curve remains application policy because the real
-radio's acoustic transfer law has not yet been measured.
+## Configure the Windows Ethernet adapter
 
-Periods typed into Primary text attach to the preceding character and update
-the matching Dot 1–8 checkboxes; checking a steady dot also inserts that period
-into the text field. The field accepts at most eight display characters, with
-dots excluded from that limit. The builder and preview present all dots in
-physical left-to-right order. Parrot's `-PARROT-` overlay clears all icons and
-disabling the mode restores the exact most recently submitted 68-byte display.
-The Lab app starts at speaker volume 22.
+Lab replaces the radio, so the PC's Ethernet adapter must use the IP address
+that the CommandMic expects its radio to have. With the default Icom addressing,
+the connection looks like this:
 
-Microphone gain uses the observed two-frame mapping for values 1–5. Physical
-testing confirms that changes take audible effect during an already-connected
-session, and the selected value is reflected in endpoint state.
-
-Original project code is MIT licensed. See [NOTICE.md](NOTICE.md) for Icom
-trademark and third-party asset limitations.
-
-Windows releases use a self-contained application directory for fast startup.
-Extract the ZIP, keep the directory together, and run `IPCommandMicLab.exe`.
-The Windows x64 build requires the Microsoft Edge WebView2 runtime. Audits are
-written to the current user's application-data directory, so the extracted
-release remains portable and read-only-safe.
-
-For a short unattended physical-link check, keep the real radio disconnected
-and run:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\physical_health_check.py `
-  --real-radio-disconnected --duration 180
+```text
+Physical CommandMic             Windows PC running Lab
+192.168.0.2        Ethernet     192.168.0.1
+        |------------------------------|
+              PoE switch/injector
 ```
 
-The check requires no interaction after startup and writes a JSON summary plus
-the protocol audit under `artifacts/`. Its duration is intentionally bounded to
-10 minutes; it is a practical health check, not a claim of long-duration soak
-qualification.
+Use these defaults unless the radio programming (codeplug) assigns different
+addresses:
 
-Three process-level teardown/reconnect cycles take about 85 seconds and are
-also unattended:
+| Setting | Value |
+| --- | --- |
+| PC Ethernet / Local / radio IP | `192.168.0.1` |
+| Physical CommandMic IP | `192.168.0.2` |
+| Subnet mask | `255.255.255.0` |
+| Default gateway | Leave blank |
+| DNS servers | Leave blank |
+| Control TCP port | `52001` |
+| Audio UDP port | `50000` |
+
+To set the PC address on Windows 10 or 11:
+
+1. Press **Windows+R**, enter `ncpa.cpl`, and press **Enter**.
+2. Right-click the wired Ethernet adapter connected to the CommandMic and
+   select **Properties**.
+3. Select **Internet Protocol Version 4 (TCP/IPv4)** and then **Properties**.
+4. Select **Use the following IP address**.
+5. Enter `192.168.0.1` for the IP address and `255.255.255.0` for the subnet
+   mask. Leave gateway and DNS blank.
+6. Select **OK**, then **Close**.
+
+Do not assign `192.168.0.2` to the PC while the physical CommandMic is using
+that address. Two devices with the same address cannot communicate reliably.
+
+If your CommandMic was programmed for different addresses, use the programmed
+**radio IP** for the PC adapter and the programmed **microphone IP** in Lab.
+The two addresses must be unique and on the same subnet.
+
+## Connect in Lab
+
+At the top of the application, confirm:
+
+- **Local / radio IP:** the static address assigned to the PC adapter
+- **CommandMic IP:** the physical microphone's address
+- **TCP port:** `52001`, unless reprogrammed
+- **UDP audio port:** `50000`, unless reprogrammed
+
+Select **Connect**. A successful connection shows a stable, pulsing connection
+indicator in the upper-right corner. Lab then runs its short display, LED, and
+audio startup sequence before settling on `--TEST--`.
+
+## What Lab can do
+
+- Show physical button, PTT, and connection activity in real time
+- Build and send verified LCD text, icons, dots, blink states, and visual modes
+- Control the status LED, backlight, microphone gain, and speaker volume
+- Monitor microphone audio with peak/RMS values and a spectrum display
+- Record microphone audio to WAV
+- Replay the latest transmission with Parrot mode
+- Play WAV, MP3, FLAC, OGG/Vorbis, and AIFF files through the CommandMic
+- Inspect protocol events and send validated advanced display frames
+
+The app is intentionally a diagnostic and development tool. It does not emulate
+radio programming such as zones, channels, or every codeplug-dependent button
+action.
+
+## Troubleshooting
+
+**Lab does not connect**
+
+- Make sure the real radio is disconnected.
+- Confirm that the CommandMic has PoE power and an Ethernet link.
+- Confirm the PC adapter is using the radio-side IP, not the microphone IP.
+- Check that no other device is already using either address.
+- Confirm both addresses are on the same subnet.
+- Allow `IPCommandMicLab.exe` through Windows Firewall on Private networks.
+- If the adapter has several IPv4 addresses, temporarily remove unrelated
+  addresses from that dedicated adapter.
+
+**The window does not open**
+
+- Extract the entire ZIP before running the executable.
+- Keep `IPCommandMicLab.exe` with the other extracted files.
+- Install or repair the Microsoft Edge WebView2 Runtime.
+
+**The mic connects but a button appears to do nothing**
+
+Some button behavior is defined by the radio codeplug. Lab reports received
+controls but does not invent radio-side zone, channel, or function behavior.
+
+## Project status
+
+The current Windows release is
+[`0.1.0-alpha.33`](https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.33).
+It has been physically tested with a real CommandMic. It is labeled alpha
+because this is reverse-engineered hardware integration and some behavior is
+still codeplug-dependent or not yet implemented.
+
+See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the precise verified scope
+and open limitations. Protocol framing, endpoint sessions, display models, and
+media handling are provided by the
+[`ip-commandmic`](https://github.com/Mason10198/ip-commandmic) library.
+
+## Development on Windows
+
+Python 3.11 or newer is required:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\physical_restart_check.py `
-  --real-radio-disconnected --cycles 3
-```
-
-Each cycle constructs a fresh endpoint process, reaches a stable session,
-observes heartbeat replies, shuts down cleanly, pauses briefly, and reconnects.
-
-For local development before the library is published:
-
-```powershell
+git clone https://github.com/Mason10198/ip-commandmic-lab.git
+cd ip-commandmic-lab
 python -m venv .venv
-.\.venv\Scripts\python -m pip install "ip-commandmic[audio]>=1.0,<2"
-.\.venv\Scripts\python -m pip install -e .
+.\.venv\Scripts\python -m pip install --upgrade pip
+.\.venv\Scripts\python -m pip install -e ".[dev]"
 .\.venv\Scripts\ip-commandmic-lab
 ```
+
+Run the automated tests with:
+
+```powershell
+.\.venv\Scripts\python -m pytest -q
+```
+
+Release packaging instructions are in
+[packaging/windows/README.md](packaging/windows/README.md).
+
+## License and trademarks
+
+Original project code is MIT licensed. Icom and IP CommandMic are trademarks
+of their respective owner; this independent project is not affiliated with or
+endorsed by Icom. See [NOTICE.md](NOTICE.md) for details.
