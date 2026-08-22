@@ -3,8 +3,8 @@
 ## Release posture
 
 Version `0.1.0-alpha.33` is a physically qualified **public alpha candidate**.
-Its functional, recovery and bounded stability gates pass; the remaining gates
-are stable-library CI, frozen-package rebuild and publication. The real radio
+Its functional, recovery and bounded stability gates pass; stable-library CI,
+the frozen-package smoke, checksummed ZIP and GitHub prerelease are complete. The real radio
 must remain disconnected: this app
 implements the radio side of the link and is intended to operate a physical or
 software CommandMic.
@@ -43,12 +43,18 @@ These gaps are documented rather than hidden behind application approximations:
   passed from the accepted v1 runtime without transient instability, PTT or
   endpoint errors. Long unattended soak duration is not a release goal.
 
-## Remaining public-alpha gates
+## Completed public-alpha gates
 
-- Update hosted CI to the stable `v1.0.0` library tag and pass Linux/Windows
+- [x] Update hosted CI to the stable `v1.0.0` library tag and pass Linux/Windows
   tests plus the Windows frozen-package smoke.
-- Rebuild, checksum and clean-start the Windows x64 ZIP, then publish
+- [x] Rebuild, checksum and clean-start the Windows x64 ZIP, then publish
   `0.1.0-alpha.33` with the exact safety and platform boundary.
+
+Published release:
+<https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.33>
+
+Windows ZIP SHA-256:
+`5748755505f1924306d2ff88900304e81febf0a6e91f9edbd4a7f7e8000504a4`
 
 ## Post-alpha protocol/product work
 - A generic continuous low-latency application-audio source and the reference
