@@ -30,7 +30,8 @@ This repository contains only the application. Protocol framing, endpoint
 sessions, display models and media handling are provided by
 [`ip-commandmic`](https://github.com/mason10198/ip-commandmic).
 
-Status: `0.1.0-alpha.33` physically accepted public-alpha candidate. The
+Status: published, physically accepted `0.1.0-alpha.33` reference/conformance
+client. The unified gateway/PWA is the primary future interface. This
 application acts as a radio-side endpoint, so the real
 radio must be disconnected from the CommandMic under test.
 
