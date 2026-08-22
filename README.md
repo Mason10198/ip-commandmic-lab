@@ -40,8 +40,6 @@ Lab is intentionally a diagnostic endpoint rather than a general automation or
 multi-radio service. Its implementation is a working example for applications
 that use a physical CommandMic as an input/audio device, including future
 radioless-node, accessibility and custom-controller integrations.
-Cross-repository roadmap work is tracked on the
-[IP CommandMic GitHub Project](https://github.com/users/Mason10198/projects/1).
 
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the verified release scope,
 runtime requirements and protocol-dependent functionality that remains open.
