@@ -1,6 +1,7 @@
 /.venv/
 /.venv.pre-rename/
 /.pytest_cache/
+/.pytest-temp/
 /artifacts/
 /build/
 /dist/

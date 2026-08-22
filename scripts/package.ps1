@@ -4,8 +4,8 @@ $release = Join-Path $root "release"
 $latest = Join-Path $root ".packaging\latest.txt"
 if (-not (Test-Path $latest)) { throw "Run scripts\build.ps1 before packaging." }
 $app = (Get-Content -LiteralPath $latest -Raw).Trim()
-$stage = Join-Path $release "package-alpha.32"
-$zip = Join-Path $release "ip-commandmic-lab-0.1.0-alpha.32-windows-x64.zip"
+$stage = Join-Path $release "package-alpha.33"
+$zip = Join-Path $release "ip-commandmic-lab-0.1.0-alpha.33-windows-x64.zip"
 $checksum = "$zip.sha256"
 
 if (-not (Test-Path (Join-Path $app "IPCommandMicLab.exe"))) {

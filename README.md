@@ -30,7 +30,8 @@ This repository contains only the application. Protocol framing, endpoint
 sessions, display models and media handling are provided by
 [`ip-commandmic`](https://github.com/mason10198/ip-commandmic).
 
-Status: public alpha. The application acts as a radio-side endpoint, so the real
+Status: `0.1.0-alpha.33` physically accepted public-alpha candidate. The
+application acts as a radio-side endpoint, so the real
 radio must be disconnected from the CommandMic under test.
 
 See [RELEASE_READINESS.md](RELEASE_READINESS.md) for the verified release scope,
@@ -101,7 +102,7 @@ For local development before the library is published:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python -m pip install -e ..\ip-commandmic[audio]
+.\.venv\Scripts\python -m pip install "ip-commandmic[audio]>=1.0,<2"
 .\.venv\Scripts\python -m pip install -e .
 .\.venv\Scripts\ip-commandmic-lab
 ```

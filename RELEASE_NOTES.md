@@ -1,3 +1,10 @@
+# 0.1.0-alpha.33
+
+- Moves the accepted Lab application onto the stable `ip-commandmic 1.x` SDK
+  contract without changing its physically verified endpoint behavior.
+- Records the complete physical functional matrix, ten recovery cycles and
+  bounded five-minute stability acceptance as the public-alpha baseline.
+
 # 0.1.0-alpha.32
 
 - Replaces the competing connection-status writers with one stable state model,

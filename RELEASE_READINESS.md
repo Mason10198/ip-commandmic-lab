@@ -2,13 +2,14 @@
 
 ## Release posture
 
-Version `0.1.0-alpha.32` is ready for a packaged **public alpha** release. Its
-offline application and packaging checks pass, but it is not a final
-hardware-qualified release. The real radio must remain disconnected: this app
+Version `0.1.0-alpha.33` is a physically qualified **public alpha candidate**.
+Its functional, recovery and bounded stability gates pass; the remaining gates
+are stable-library CI, frozen-package rebuild and publication. The real radio
+must remain disconnected: this app
 implements the radio side of the link and is intended to operate a physical or
 software CommandMic.
 
-The application is a thin client of `ip-commandmic 1.0.0rc2`. Protocol
+The application is a thin client of stable `ip-commandmic 1.x`. Protocol
 framing, sessions, display dimensions and metadata, LED/backlight values,
 button/PTT decoding, speaker-volume state, Parrot capture/replay, RTP/audio
 packetization, common-file decoding and WAV recording are library-owned. The
@@ -28,7 +29,7 @@ workflow.
 - Unified CommandMic dark theme and per-user audit storage outside the portable
   application directory.
 
-## Pending protocol/library progress
+## Completed physical acceptance
 
 These gaps are documented rather than hidden behind application approximations:
 
@@ -38,12 +39,18 @@ These gaps are documented rather than hidden behind application approximations:
   icon clearing/restoration, Parrot audio, 0–32 and startup-22 volume behavior,
   spectrum freshness, WAV recording, common audio-file playback, and status LED
   off behavior.
-- Automated physical connection health passed three consecutive fresh-process
-  restart/reconnect cycles on 2026-08-21. All three completed startup and
-  maintained heartbeat replies without a recorded failure. Three consecutive
-  PoE power cycles also recovered through the same running endpoint: each
-  restored startup and heartbeat traffic, with no connection or startup
-  failures recorded. Long unattended soak duration is not a release goal.
+- Ten restart/reconnect/physical-power cycles and a bounded five-minute soak
+  passed from the accepted v1 runtime without transient instability, PTT or
+  endpoint errors. Long unattended soak duration is not a release goal.
+
+## Remaining public-alpha gates
+
+- Update hosted CI to the stable `v1.0.0` library tag and pass Linux/Windows
+  tests plus the Windows frozen-package smoke.
+- Rebuild, checksum and clean-start the Windows x64 ZIP, then publish
+  `0.1.0-alpha.33` with the exact safety and platform boundary.
+
+## Post-alpha protocol/product work
 - A generic continuous low-latency application-audio source and the reference
   AllStarLink-style node bridge. Bounded files, generated tones and Parrot replay
   are implemented now.

@@ -8,7 +8,7 @@ from ip_commandmic_lab.app import CommandMicLabService, build_lab_html
 
 
 def test_lab_packages_full_control_surface() -> None:
-    assert ip_commandmic_lab.__version__ == "0.1.0a32"
+    assert ip_commandmic_lab.__version__ == "0.1.0a33"
     page = build_lab_html()
     assert "__DISPLAY_SVG__" not in page
     assert "__CAPABILITIES_JSON__" not in page
