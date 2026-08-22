@@ -26,7 +26,7 @@ You need:
 - The real radio disconnected
 
 1. Download
-   [`ip-commandmic-lab-0.1.0-alpha.33-windows-x64.zip`](https://github.com/Mason10198/ip-commandmic-lab/releases/download/v0.1.0-alpha.33/ip-commandmic-lab-0.1.0-alpha.33-windows-x64.zip).
+   [`ip-commandmic-lab-0.1.0-alpha.34-windows-x64.zip`](https://github.com/Mason10198/ip-commandmic-lab/releases/download/v0.1.0-alpha.34/ip-commandmic-lab-0.1.0-alpha.34-windows-x64.zip).
 2. Right-click the ZIP, select **Extract All**, and open the extracted folder.
 3. Open the `IPCommandMicLab` folder and run `IPCommandMicLab.exe`.
 4. If Windows Firewall asks, allow access on **Private networks**.
@@ -138,7 +138,7 @@ controls but does not invent radio-side zone, channel, or function behavior.
 ## Project status
 
 The current Windows release is
-[`0.1.0-alpha.33`](https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.33).
+[`0.1.0-alpha.34`](https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.34).
 It has been physically tested with a real CommandMic. It is labeled alpha
 because this is reverse-engineered hardware integration and some behavior is
 still codeplug-dependent or not yet implemented.

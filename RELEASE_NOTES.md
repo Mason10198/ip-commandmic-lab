@@ -1,3 +1,11 @@
+# 0.1.0-alpha.34
+
+- Fixes startup from Windows-downloaded ZIPs by removing Mark-of-the-Web only
+  from the app's private bundled runtime before pythonnet loads its .NET
+  assembly.
+- Adds a release test that applies download-zone markers to the packaged files
+  before exercising the native Windows backend.
+
 # 0.1.0-alpha.33
 
 - Moves the accepted Lab application onto the stable `ip-commandmic 1.x` SDK

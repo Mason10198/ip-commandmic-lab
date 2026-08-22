@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import threading
 import time
 from importlib.resources import files
@@ -24,6 +25,31 @@ from ip_commandmic import (
     verified_display_svg_decimal_point_paths,
 )
 from .effects import CHORD3UP, CHORD3UP_LEVEL_DBFS, startup_frames
+
+
+def _unblock_bundled_windows_runtime() -> bool:
+    """Remove the download-zone stream from pythonnet's private assembly.
+
+    Windows propagates Mark-of-the-Web from a downloaded ZIP to every extracted
+    file. .NET Framework then refuses to resolve pythonnet's bundled runtime
+    assembly. The user has already chosen to run this executable, so remove the
+    marker only from this executable's private Python.Runtime.dll.
+    """
+
+    if os.name != "nt" or not getattr(sys, "frozen", False):
+        return False
+    runtime_dll = (
+        Path(sys.executable).parent
+        / "_internal"
+        / "pythonnet"
+        / "runtime"
+        / "Python.Runtime.dll"
+    )
+    try:
+        os.remove(f"{runtime_dll}:Zone.Identifier")
+    except (FileNotFoundError, OSError):
+        return False
+    return True
 
 
 def _asset_text(name: str) -> str:
@@ -322,6 +348,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--audit-directory", type=Path, default=default_audit_root())
     parser.add_argument("--package-smoke-test", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    _unblock_bundled_windows_runtime()
     import webview
 
     if args.package_smoke_test:

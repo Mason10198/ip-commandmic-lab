@@ -2,7 +2,7 @@
 
 ## Release posture
 
-Version `0.1.0-alpha.33` is a physically qualified **public alpha candidate**.
+Version `0.1.0-alpha.34` is a physically qualified **public alpha candidate**.
 Its functional, recovery and bounded stability gates pass; stable-library CI,
 the frozen-package smoke, checksummed ZIP and GitHub prerelease are complete. The real radio
 must remain disconnected: this app
@@ -48,10 +48,10 @@ These gaps are documented rather than hidden behind application approximations:
 - [x] Update hosted CI to the stable `v1.0.0` library tag and pass Linux/Windows
   tests plus the Windows frozen-package smoke.
 - [x] Rebuild, checksum and clean-start the Windows x64 ZIP, then publish
-  `0.1.0-alpha.33` with the exact safety and platform boundary.
+  `0.1.0-alpha.34` with the exact safety and platform boundary.
 
 Published release:
-<https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.33>
+<https://github.com/Mason10198/ip-commandmic-lab/releases/tag/v0.1.0-alpha.34>
 
 Windows ZIP SHA-256:
 `5748755505f1924306d2ff88900304e81febf0a6e91f9edbd4a7f7e8000504a4`
